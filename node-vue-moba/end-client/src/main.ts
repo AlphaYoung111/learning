@@ -1,0 +1,20 @@
+
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import httpInstall from '@/api/http'
+declare module 'vue/types/vue' {
+  interface Vue {
+    $http: any
+  }
+}
+Vue.use(ElementUI)
+Vue.use(httpInstall)
+
+Vue.config.productionTip = false
+new Vue({
+  router,
+  render: h => h(App)
+}).$mount('#app')
