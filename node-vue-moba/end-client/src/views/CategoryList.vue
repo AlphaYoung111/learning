@@ -8,6 +8,7 @@
       <el-table-column fixed="right" label="操作" width="180">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="rowClick(scope.row)">编辑</el-button>
+          <el-button type="text" size="small" @click="rowRemove(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -32,8 +33,24 @@ export default class CategoryList extends Vue {
     this.tableData = res.data
   }
 
-  rowClick(row) {
+  rowClick(row: TableItems) {
     this.$router.push(`/categories/edit/${row._id}`)
+  }
+  async rowRemove(row: TableItems) {
+    this.$confirm('是否确定要删除分类?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async () => {
+      this.$http.delete(`categories/${row._id}`)
+      this.$message({
+        type: 'success',
+        message: '删除成功!'
+      })
+      this.getData()
+    })
+
+
   }
 }
 
