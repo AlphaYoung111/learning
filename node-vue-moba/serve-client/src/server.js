@@ -2,9 +2,12 @@
 var express = require('express')
 var app = express()
 
+app.set('secret','sdasuidiasbdiugabs')
+
 // 中间件
 app.use(express.json())
 app.use(require('cors')())
+app.use('/uploads',express.static(__dirname+'/uploads'))
 
 // 路由区域
 require('./routes/admin/index')(app)
