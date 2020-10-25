@@ -24,14 +24,7 @@ module.exports = app => {
     })
   })
 
-  router.get('/', async (req, res, next) => {
-    const token = String(req.headers.authorization || '').split(' ').pop()
-    const { id } = jwt.verify(token, app.get('secret'))
-    req.user = await AdminUser.findById(id)
-    console.log(tokenData)
-    assert(req.user,401,'请先登录')
-    await next()
-  },async (req, res) => {
+  router.get('/',async (req, res) => {
     const queryOptions = {}
     if (req.Model.modelName === 'Category') {
       queryOptions.populate = 'parent'
@@ -44,16 +37,17 @@ module.exports = app => {
     const items = await req.Model.findById(req.params.id)
     res.send(items)
   })
-  app.use('/admin/api/rest/:resource', async (req, res, next) => {
-    const modelName = require('inflection').classify(req.params.resource)
-    req.Model = require(`../../models/${modelName}`)
-    next()
-  }, router)
+
+  // 封装登录校验中间件
+  const authMiddleware =  require('../../middleware/auth')
+  // 加载模型中间件
+  const resourceMiddleware = require('../../middleware/resource')
+  app.use('/admin/api/rest/:resource',authMiddleware(),resourceMiddleware(),router)
 
   const multer = require('multer')
   const upload = multer({dest:__dirname+'/../../uploads'})
   // 上传图片
-  app.post('/admin/api/upload', upload.single('file'),async (req, res) => {
+  app.post('/admin/api/upload', authMiddleware(),upload.single('file'),async (req, res) => {
     const file = req.file
     file.url=`http://localhost:11111/uploads/${file.filename}`
     res.send(file)
@@ -64,19 +58,9 @@ module.exports = app => {
     // 找用户
     const user = await AdminUser.findOne({ username }).select('password')
     assert(user,422,'用户不存在')
-    // if (!user) {
-    //   return res.status(422).send({
-    //     message:'用户不存在'
-    //   })
-    // }
     // 校验密码
     const isValid = require('bcrypt').compareSync(password, user.password)
     assert(isValid,422,'密码错误')
-    // if (!isValid) {
-    //   return res.status(422).send({
-    //     message:'密码错误'
-    //   })
-    // }
     // 返回token
     const token = jwt.sign({ id: user._id }, app.get('secret'))
     res.send({token})

@@ -13,7 +13,16 @@ declare module 'vue/types/vue' {
 }
 Vue.use(ElementUI)
 Vue.use(httpInstall)
-
+let token = window.localStorage.getItem('token') || ''
+Vue.mixin({
+  methods: {
+    getAuthHeaders() {
+      return {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  }
+})
 Vue.config.productionTip = false
 new Vue({
   router,

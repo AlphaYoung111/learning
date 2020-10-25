@@ -1,0 +1,52 @@
+*{
+  box-sizing: border-box;
+  outline: none;
+}
+html{
+  font-size: 13px;
+}
+body{
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.2em;
+  background: #f1f1f1;
+}
+a{
+  color: #666;
+}
+
+// color
+$colors:(
+  "primary":#db9e3f,
+  "white":#fff,
+  "light":#f9f9f9,
+  "black":#000,
+  "dark":#222,
+  "dark-1":#343440,
+  "grey":#999
+);
+
+// text
+@each $colorKeys,$color in $colors {
+  .text-#{$colorKeys}{
+    color: $color;
+  }
+  .bg-#{$colorKeys}{
+    background-color: $color;
+  }
+}
+
+// text align
+@each $text in (left,right,center) {
+  .text-#{$text}{
+    text-align: $text;
+  }
+}
+
+// font-size
+$base-font-size:13px;
+$font-sizes:(
+  "xs":0.7692rem,
+  "sm":0.9231rem
+)
