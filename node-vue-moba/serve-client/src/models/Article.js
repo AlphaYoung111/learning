@@ -10,7 +10,9 @@ const schema = new moogoose.Schema({
   }],
   body: {
     type:String
-  }
+  } 
+},{
+  timestamps:true
 })
 
 module.exports = moogoose.model('Article', schema)

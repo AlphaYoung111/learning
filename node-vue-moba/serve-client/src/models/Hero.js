@@ -37,4 +37,4 @@ const schema = new moogoose.Schema({
   }]
 })
 
-module.exports = moogoose.model('Hero', schema)
+module.exports = moogoose.model('Hero', schema,'heroes')

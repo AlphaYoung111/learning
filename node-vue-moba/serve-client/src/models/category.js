@@ -9,5 +9,17 @@ const schema = new moogoose.Schema({
     ref:'Category'
   }
 })
+schema.virtual('children', {
+  localField: '_id',
+  foreignField: 'parent',
+  justOne: false,
+  ref: 'Category'
+})
 
+schema.virtual('newsList', {
+  localField: '_id',
+  foreignField: 'categories',
+  justOne: false,
+  ref: 'Article'
+})
 module.exports = moogoose.model('Category', schema)
