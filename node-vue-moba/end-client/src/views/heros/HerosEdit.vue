@@ -17,6 +17,12 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
+          <el-form-item label="背景">
+            <el-upload class="avatar-uploader" :action="$http.defaults.baseURL+'/upload'" :show-file-list="false" :on-success="res=>form.banner=res.url">
+              <img v-if="form.banner" :src="form.banner" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
           <el-form-item label="类型">
             <el-select v-model="form.categories" multiple>
               <el-option v-for="item in categoriesOpt" :key="item._id" :label="item.name" :value="item._id"></el-option>
@@ -109,6 +115,7 @@ export default class CategoryEdit extends Vue {
     name: '',
     avatar: '',
     title: '',
+    banner: '',
     categories: [],
     scores: {
       difficult: 0,

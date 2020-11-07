@@ -29,7 +29,7 @@
     <!-- news -->
     <m-list-card title="新闻资讯" icon="menu1" :categories="newCates">
       <template #items="{row}">
-        <div class="py-2 fs-lg d-flex" v-for="item in row.newsList" :key="item._id">
+        <div class="py-2 fs-lg d-flex" v-for="item in row.newsList" :key="item._id" @click="gotoArticle(item._id)">
           <span class="text-info">[{{item.categoryName}}]</span>
           <span>|</span>
           <span class="flex-1 text-one text-dark pr-2">{{item.title}}</span>
@@ -42,7 +42,7 @@
     <m-list-card title="英雄列表" icon="card-hero" :categories="heroesData">
       <template #items="{row}">
         <div class="py-2 fs-lg d-flex flex-wrap heroes-wrap jc-start">
-          <div class="d-flex flex-column w-20 pr-1 text-center jc-start" v-for="item in row.heroList" :key="item.name">
+          <div class="d-flex flex-column w-20 pr-1 text-center jc-start" v-for="item in row.heroList" :key="item._id" @click="gotoHero(item._id)">
             <img :src="item.avatar" alt />
             <span>{{item.name}}</span>
           </div>
@@ -119,6 +119,7 @@
 <script>
 // @ is an alias to /src
 import { reactive, onMounted, getCurrentInstance, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
 function useNewsData (ctx) {
   let state = reactive({
     newCates: [],
@@ -144,7 +145,6 @@ function useHeroesDate (ctx) {
   const getHeros = async () => {
     const res = await ctx.$http.get('/heroes/list')
     state.heroesData = res.data
-    console.log(state.heroesData)
   }
   onMounted(() => {
     getHeros()
@@ -158,20 +158,24 @@ export default {
   name: 'Home',
   setup () {
     const { ctx } = getCurrentInstance()
+    const router = useRouter()
     let { state: news, getNews } = useNewsData(ctx)
     let { state: heros, getHeros } = useHeroesDate(ctx)
+    const gotoArticle = (id) => {
+      router.push(`/articles/${id}`)
+    }
+    const gotoHero = (id) => {
+      router.push(`/hero/${id}`)
+    }
     return {
       ...toRefs(news),
       ...toRefs(heros),
       getNews,
-      getHeros
+      getHeros,
+      gotoArticle,
+      gotoHero
     }
   },
-  // data () {
-  //   return {
-  //     newCates: []
-  //   }
-  // },
 }
 </script>
 <style lang="scss" scoped>
