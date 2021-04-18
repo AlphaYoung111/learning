@@ -2,10 +2,10 @@
 
 ```js
 function test() {
-    const a = 'hello'
-    return function () {
-        eval('')
-    }
+  const a = 'hello'
+  return function () {
+    eval('')
+  }
 }
 test()()
 ```
@@ -16,10 +16,10 @@ test()()
 
 ```js
 function testEval() {
-    const a = 'hello'
-    return function () {
-        window.eval('')
-    }
+  const a = 'hello'
+  return function () {
+    window.eval('')
+  }
 }
 ```
 

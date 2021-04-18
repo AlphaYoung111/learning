@@ -2,10 +2,10 @@
 
 ```js
 $('#test').on(function () {
-    console.log('dom-evnet')
+  console.log('dom-evnet')
 })
 while (true) {
-    console.log('i am while', Math.random())
+  console.log('i am while', Math.random())
 }
 ```
 
@@ -31,19 +31,19 @@ while (true) {
 ```js
 // main.js
 $('#test').on(function () {
-    console.log('dom-evnet')
+  console.log('dom-evnet')
 })
 const worker = new Worker('task.js')
 worker.onmessage = function (event) {
-    // 这里拿到的就是下面的随机数
-    console.log(event.data)
+  // 这里拿到的就是下面的随机数
+  console.log(event.data)
 }
 ```
 
 ```js
 // task.js
 while (true) {
-    postMessage(Math.random())
-    console.log('i am while', Math.random())
+  postMessage(Math.random())
+  console.log('i am while', Math.random())
 }
 ```
