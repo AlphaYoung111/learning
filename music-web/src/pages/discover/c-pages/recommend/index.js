@@ -1,24 +1,12 @@
-import React, { memo, useEffect } from 'react'
-import { connect } from 'react-redux'
-
-import { getTopBannerAction } from './store/actionCreators'
-
+import React, { memo } from 'react'
+import { RecommendWraper } from './style'
+import AYTopBanner from './c-cpns/top-banners'
 function AYRecommend(props) {
-  const { getBanners } = props
-
-  useEffect(() => {
-    getBanners()
-  }, [getBanners])
-
-  return <div>AYRecommend</div>
+  return (
+    <RecommendWraper>
+      <AYTopBanner />
+    </RecommendWraper>
+  )
 }
 
-const mapStateToProps = (state) => ({
-  topBanners: state.recommend.topBanners,
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  getBanners: () => dispatch(getTopBannerAction()),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(memo(AYRecommend))
+export default memo(AYRecommend)
