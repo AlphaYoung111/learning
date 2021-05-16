@@ -1,4 +1,6 @@
 import { queryCurrent, query as queryUsers } from '@/services/user';
+import {json} from "express";
+
 const UserModel = {
   namespace: 'user',
   state: {
@@ -14,10 +16,17 @@ const UserModel = {
     },
 
     *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
+      let userInfo = JSON.parse(localStorage.getItem('userInfo'))
+      if (!userInfo){
+        userInfo = yield call(queryCurrent);
+        // 储存用户信息
+        localStorage.setItem('userInfo',JSON.stringify(userInfo))
+      }
+
+
       yield put({
         type: 'saveCurrentUser',
-        payload: response,
+        payload: userInfo,
       });
     },
   },

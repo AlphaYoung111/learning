@@ -23,3 +23,12 @@ export const getNewAlbums = (limit) => {
     },
   })
 }
+
+export const getTopList = (index) => {
+  return request({
+    url: '/top/list',
+    params: {
+      idx: index,
+    },
+  })
+}

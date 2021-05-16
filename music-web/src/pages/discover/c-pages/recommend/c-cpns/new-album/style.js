@@ -30,7 +30,7 @@ export const AlbumWrapper = styled.div`
       height: 150px;
 
       .ant-carousel .slick-slide {
-        height: 150px;
+        height: 160px;
         overflow: hidden;
       }
 
@@ -38,10 +38,6 @@ export const AlbumWrapper = styled.div`
         display: flex !important;
         justify-content: space-between;
         align-items: center;
-
-        &: > div {
-          margin-right: 15px;
-        }
       }
     }
   }

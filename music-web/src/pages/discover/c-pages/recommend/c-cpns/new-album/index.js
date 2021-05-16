@@ -5,7 +5,7 @@ import { AlbumWrapper } from './style'
 import { getNewAlbumsAction } from '../../store/actionCreators'
 import { NEW_ALBUMS_LIMIT } from '@/common/constants'
 import AYThemeHeaderRCM from '@/components/theme-header-rcm'
-import AYSongsCover from '@/components/songs-cover'
+import AYAlbumCover from '@/components/album-cover'
 import { Carousel } from 'antd'
 export default memo(function AYNewAlbum() {
   const dispatch = useDispatch()
@@ -37,7 +37,7 @@ export default memo(function AYNewAlbum() {
               return (
                 <div key={item} className="page">
                   {newAlbums.slice(item * 5, (item + 1) * 5).map((item) => {
-                    return <AYSongsCover key={item.id} info={item} />
+                    return <AYAlbumCover key={item.id} info={item} />
                   })}
                 </div>
               )
