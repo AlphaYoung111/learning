@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">{{title}}</div>
+    <script>
+      function reactive(obj) {
+        const handler = {
+          get(target, key) {
+            // 依赖收集
+            track(target, key)
+            return target[key]
+          },
+          set(target, key, value) {
+            target[key] = value
+            // app.update()
+            // 依赖更新
+            trigger(target, key)
+          },
+        }
+        return new Proxy(obj, handler)
+      }
+
+      const effectStack = []
+      // 副作用函数
+      function effect(fn) {
+        const eff = function () {
+          try {
+            console.log(eff)
+            effectStack.push(eff)
+            fn()
+          } finally {
+            effectStack.pop()
+          }
+        }
+
+        eff()
+        return eff
+      }
+
+      const targetMap = {}
+      // {target:{key:[]}}
+      // 依赖搜集
+      function track(target, key) {
+        const effect = effectStack[effectStack.length - 1]
+        if (effect) {
+          let map = targetMap[target]
+          if (!map) {
+            map = targetMap[target] = {}
+          }
+
+          let deps = map[key]
+          if (!deps) {
+            deps = map[key] = []
+          }
+
+          // 存入副作用函数
+          if (deps.indexOf(effect) === -1) {
+            deps.push(effect)
+          }
+        }
+      }
+
+      // 依赖更新
+      function trigger(target, key) {
+        const map = targetMap[target]
+        if (map) {
+          const deps = map[key]
+          if (deps) {
+            deps.forEach((effect) => effect())
+          }
+        }
+      }
+
+      const Vue = {
+        createApp(options) {
+          // 根据渲染终端的不同,传入不同的选择器方法，和添加元素方法
+          const render = Vue.createRenderer({
+            querySelector(selector) {
+              return document.querySelector(selector)
+            },
+            insert(child, parent, anchor) {
+              // anchor为参考节点
+              parent.insertBefore(child, anchor || null)
+            },
+          })
+          return render.createApp(options)
+        },
+        createRenderer({ querySelector, insert }) {
+          return {
+            createApp(options) {
+              return {
+                mount(selector) {
+                  // 为了兼容不同的平台这里不应该使用doucment
+                  // 应该是哟个买卖你传入的配置项
+                  const parent = querySelector(selector)
+                  if (!options.render) {
+                    options.render = this.complie(parent.innerHTML)
+                  }
+
+                  // 处理兼容
+                  if (options.setup) {
+                    this.setupState = options.setup()
+                  }
+                  if (options.data) {
+                    this.data = options.data()
+                  }
+
+                  this.proxyData = new Proxy(this, {
+                    get(target, key) {
+                      if (key in target.setupState) {
+                        return target.setupState[key]
+                      } else {
+                        return target.data[key]
+                      }
+                    },
+                    set(target, key, value) {
+                      if (key in target.setupState) {
+                        target.setupState[key] = value
+                      } else {
+                        target.data[key] = value
+                      }
+                    },
+                  })
+
+                  // 更新函数
+                  this.update = function () {
+                    const el = options.render.call(this.proxyData)
+
+                    parent.innerHTML = ''
+                    // parent.appendChild(el)
+                    insert(el, parent)
+                  }
+
+                  // 初始化
+                  this.update()
+                },
+                complie(template) {
+                  return function render() {
+                    const h3 = document.createElement('h3')
+                    h3.textContent = this.title
+                    return h3
+                  }
+                },
+              }
+            },
+          }
+        },
+      }
+    </script>
+    <script>
+      const { createApp } = Vue
+      const app = createApp({
+        data() {
+          return {
+            title: 'options title',
+          }
+        },
+        setup() {
+          const state = reactive({
+            title: '我是标题',
+          })
+          setTimeout(() => {
+            state.title = 'xxxx'
+          }, 2000)
+          return state
+        },
+      })
+
+      app.mount('#app')
+    </script>
+  </body>
+</html>
